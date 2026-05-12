@@ -22,7 +22,7 @@ router.post("/", async (req, res) => {
 router.get("/", async (req, res) => {
   try {
     const newTodo = await pool.query("SELECT * FROM todo");
-    res.json(newTodo.rows[0]);
+    res.json(newTodo.rows);
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server Error");
@@ -36,7 +36,7 @@ router.put("/:id", async (req, res) => {
     const { description, completed } = req.body;
     const updateTodo = await pool.query(
       "UPDATE todo SET description = $1, completed = $2 WHERE todo_id = $3 RETURNING *",
-      [description, completed, id],
+      [description, completed || false, id],
     );
     // if (updateTodo.rows.length === 0) {
     //   return res.status(404).json({ msg: "Todo not found" });
